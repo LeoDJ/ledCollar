@@ -1,4 +1,4 @@
-
+#pragma once
 #include <stdint.h>
 
 #define NUM_MIC_SAMPLES 256

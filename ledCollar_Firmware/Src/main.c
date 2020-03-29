@@ -109,15 +109,16 @@ int main(void)
   printf("LED Collar Startup...");
 
   initSound();
+  initApa102();
 
   while (1)
   {
     HAL_Delay(50);
     
     // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-    for(int i = 0; i < NUM_MIC_SAMPLES; i++) {
-      HAL_UART_Transmit(&PRINTF_UART, (uint8_t *)&micSamples[i], 2, 100);
-    }
+    // for(int i = 0; i < NUM_MIC_SAMPLES; i++) {
+    //   HAL_UART_Transmit(&PRINTF_UART, (uint8_t *)&micSamples[i], 2, 100);
+    // }
 
 
 
@@ -165,7 +166,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV8;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
