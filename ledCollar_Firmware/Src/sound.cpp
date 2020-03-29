@@ -9,7 +9,7 @@ uint16_t micSamples[NUM_MIC_SAMPLES];
 void adcTransferComplete() {
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     for(int i = 0; i < NUM_MIC_SAMPLES; i++) {
-      HAL_UART_Transmit(&PRINTF_UART, (uint8_t *)&micSamples[i], 2, 100);
+        HAL_UART_Transmit(&PRINTF_UART, (uint8_t *)&micSamples[i], 2, 100);
     }
 }
 
