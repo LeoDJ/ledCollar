@@ -1,7 +1,10 @@
 #include "apa102.h"
+
 #include "spi.h"
-#include "globals.h"
 #include "string.h"
+
+#include "globals.h"
+#include "sound.h"
 
 ledData_t ledBuf[NUM_LEDS + 2];
 
@@ -43,24 +46,39 @@ void setLed(uint16_t index, ledData_t data, bool onlyColor) {
 }
 
 uint16_t ledIndex = 0;
+uint32_t lastTransfer = 0;
+uint16_t maxVal = 0;
 
-void spiLedTransferComplete() {
-    // start new transfer
-    HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
+void doLedTransfer() {
+
+    if(HAL_GetTick() - lastTransfer < 1000 / UPDATE_RATE) { // only do update if update rate allows it
+        return;
+    }
+    lastTransfer = HAL_GetTick();
 
     // test animation
-    setLed(ledIndex % NUM_LEDS, 0);
-    setLed((ledIndex + 1) % NUM_LEDS, 0xFFFFFF);
-    ledIndex++;
-    if(ledIndex == NUM_LEDS) {
-        ledIndex = 0;
+    // setLed(ledIndex % NUM_LEDS, 0);
+    // setLed((ledIndex + 1) % NUM_LEDS, 0xFFFFFF);
+    // ledIndex++;
+    // if(ledIndex == NUM_LEDS) {
+    //     ledIndex = 0;
+    // }
+
+    // super basic music reactive
+    int16_t ledPeak = (micMaxVal - 2048) / 4;
+    if(ledPeak < 0) ledPeak = 0;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        setLed(i, i < ledPeak ? 0xFFFFFF : 0);
     }
+    micMaxVal = (float)micMaxVal / 1.02;
     
+    // start new transfer
+    HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
 }
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
     if(hspi == &LED_SPI) {
-        spiLedTransferComplete();
+        // doLedTransfer();
     }
 }
 

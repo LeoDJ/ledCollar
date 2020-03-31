@@ -1,7 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
-#define NUM_LEDS 128
+#define NUM_LEDS    128
+#define UPDATE_RATE 120 // FPS
 
 #pragma pack(push, 1)
 typedef union {
@@ -22,6 +23,7 @@ typedef union {
 #pragma pack(pop)
 
 void initApa102();
+void doLedTransfer();
 
 // sets APA102 brightness register 0-31
 void setGlobalBrightness(uint8_t brightness);

@@ -4,4 +4,6 @@
 #define NUM_MIC_SAMPLES 256
 extern uint16_t micSamples[NUM_MIC_SAMPLES];
 
+extern uint16_t micMaxVal;
+
 void initSound();

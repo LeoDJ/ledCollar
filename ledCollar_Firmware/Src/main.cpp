@@ -106,14 +106,28 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  printf("LED Collar Startup...");
+  printf("LED Collar Startup...\n");
 
   initSound();
   initApa102();
 
+  #define MAX_IDLE_COUNT  2255000 // ish
+  uint32_t idleCounter = 0, lastCpuCalc = 0;
+
   while (1)
   {
-    HAL_Delay(50);
+    if(HAL_GetTick() - lastCpuCalc > 1000) {
+      lastCpuCalc = HAL_GetTick();
+      int delta = MAX_IDLE_COUNT - (int)idleCounter;
+      delta = delta < 0 ? 0 : delta;
+      int cpu = (delta * 1000LL) / MAX_IDLE_COUNT;
+      printf("CPU usage estimation: %3d.%d%%\n", cpu/10, cpu%10);
+      idleCounter = 0;
+    }
+    idleCounter++;
+    // HAL_Delay(1);
+
+    // printf("test\n");
     
     // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     // for(int i = 0; i < NUM_MIC_SAMPLES; i++) {
