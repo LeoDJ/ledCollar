@@ -4,7 +4,8 @@ uint16_t animationStepIdx = 0;
 uint8_t curAnim = 0;
 uint16_t animNumLeds = 0;
 uint32_t (*_hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val);
-void (*_setLed)(uint16_t index, uint32_t rgb);
+void _setLed(uint16_t index, uint32_t rgb);
+void (*_setLedFunc)(uint16_t index, uint32_t rgb);
 uint32_t animBaseColor = 0xFFFFFF;
 void _fillLeds(uint32_t rgb);
 extern const uint8_t PROGMEM gamma8[];
@@ -125,22 +126,29 @@ void FastLED_setLed(uint16_t idx, uint32_t rgb) {
 void initAnimation(uint16_t numLeds) {
     animNumLeds = numLeds;
     _hsv2rgb = FastLED_hsv2rgb;
-    _setLed = FastLED_setLed;
+    _setLedFunc = FastLED_setLed;
 }
 #else
 void initAnimation(uint16_t numLeds, void (*setLed)(uint16_t index, uint32_t rgb), uint32_t (*hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val)) {
     animNumLeds = numLeds;
     _hsv2rgb = hsv2rgb;
-    _setLed = setLed;
+    _setLedFunc = setLed;
 }
 
 // use internal hsv2rgb
 void initAnimation(uint16_t numLeds, void (*setLed)(uint16_t index, uint32_t rgb)) {
-    animNumLeds = numLeds;
-    _hsv2rgb = internalHsv2rgb;
-    _setLed = setLed;
+    initAnimation(numLeds, setLed, internalHsv2rgb);
 }
 #endif
+
+void _setLed(uint16_t index, uint32_t rgb) {
+    uint32_t gammaColor = 0;
+    for(uint8_t i = 0; i < 4; i++) {
+        uint8_t val = (rgb >> (i * 8)) & 0xFF;
+        gammaColor |= gamma8[val] << (i * 8);
+    }
+    _setLedFunc(index, gammaColor);
+}
 
 void _fillLeds(uint32_t rgb) {
     for(uint16_t i = 0; i < animNumLeds; i++) {

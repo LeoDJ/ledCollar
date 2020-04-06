@@ -17,6 +17,7 @@ void initLed() {
 uint32_t lastLedUpdate = 0;
 
 void loopLed() {
+    // TODO: replace this with timer
     if(HAL_GetTick() - lastLedUpdate > 1000 / UPDATE_RATE) { // only do update if update rate allows it
         lastLedUpdate = HAL_GetTick();
         
