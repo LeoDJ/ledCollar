@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/Leandro/Nextcloud/Sync/Projekte/MSE/ledCollar/ledCollar_Firmware/Inc
+HeaderPath=C:/Users/Leandro/Nextcloud/Sync/Projekte/MSE/ledCollar/ledCollar_Firmware/src/cubemx/Inc
 HeaderFiles=gpio.h;spi.h;usart.h;stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;adc.h;dma.h;
-SourcePath=C:/Users/Leandro/Nextcloud/Sync/Projekte/MSE/ledCollar/ledCollar_Firmware/Src
+SourcePath=C:/Users/Leandro/Nextcloud/Sync/Projekte/MSE/ledCollar/ledCollar_Firmware/src/cubemx/Src
 SourceFiles=gpio.c;spi.c;usart.c;stm32f1xx_it.c;stm32f1xx_hal_msp.c;main.c;adc.c;dma.c;
 
 [PreviousLibFiles]
