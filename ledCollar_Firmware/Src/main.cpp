@@ -105,8 +105,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  _printf("LED Collar Startup...\n");
 
-  printf("LED Collar Startup...\n");
 
   initSound();
   initLed();
@@ -121,7 +121,7 @@ int main(void)
       int delta = MAX_IDLE_COUNT - (int)idleCounter;
       delta = delta < 0 ? 0 : delta;
       int cpu = (delta * 1000LL) / MAX_IDLE_COUNT;
-      printf("CPU usage estimation: %3d.%d%%\n", cpu/10, cpu%10);
+      _printf("CPU usage estimation: %3d.%d%%\n", cpu/10, cpu%10);
       idleCounter = 0;
     }
     idleCounter++;
