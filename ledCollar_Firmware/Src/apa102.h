@@ -1,8 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
-#define NUM_LEDS    128
-#define UPDATE_RATE 120 // FPS
+#define NUM_LEDS        128
+#define MAX_UPDATE_RATE 250 // FPS
 
 #pragma pack(push, 1)
 typedef union {
@@ -28,7 +28,7 @@ void doLedTransfer();
 // sets APA102 brightness register 0-31
 void setGlobalBrightness(uint8_t brightness);
 
-void setLed(uint16_t index, uint32_t bgr);
+void setLed(uint16_t index, uint32_t rgb);
 void setLed(uint16_t index, uint8_t r, uint8_t g, uint8_t b);
 void setLed(uint16_t index, ledData_t data, bool onlyColor);
 // void setLed(uint16_t index, ledData_t data) {setLed(index, data, true);}

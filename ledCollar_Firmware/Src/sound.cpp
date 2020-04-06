@@ -20,7 +20,7 @@ void adcTransferComplete() {
         HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micMaxVal, 2, 100);
     }
 
-    doLedTransfer();
+    // doLedTransfer();
 }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {

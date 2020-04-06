@@ -46,12 +46,12 @@ void setLed(uint16_t index, ledData_t data, bool onlyColor) {
 }
 
 uint16_t ledIndex = 0;
-uint32_t lastTransfer = 0;
+uint32_t lastTransfer = -1000; // ensure first ledTransfer succeeds
 uint16_t maxVal = 0;
 
 void doLedTransfer() {
 
-    if(HAL_GetTick() - lastTransfer < 1000 / UPDATE_RATE) { // only do update if update rate allows it
+    if(HAL_GetTick() - lastTransfer < 1000 / MAX_UPDATE_RATE) { // only do update if update rate allows it
         return;
     }
     lastTransfer = HAL_GetTick();
@@ -65,12 +65,12 @@ void doLedTransfer() {
     // }
 
     // super basic music reactive
-    int16_t ledPeak = (micMaxVal - 2048) / 4;
-    if(ledPeak < 0) ledPeak = 0;
-    for(int i = 0; i < NUM_LEDS; i++) {
-        setLed(i, i < ledPeak ? 0xFFFFFF : 0);
-    }
-    micMaxVal = (float)micMaxVal / 1.02;
+    // int16_t ledPeak = (micMaxVal - 2048) / 4;
+    // if(ledPeak < 0) ledPeak = 0;
+    // for(int i = 0; i < NUM_LEDS; i++) {
+    //     setLed(i, i < ledPeak ? 0xFFFFFF : 0);
+    // }
+    // micMaxVal = (float)micMaxVal / 1.02;
     
     // start new transfer
     HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
@@ -92,12 +92,13 @@ void initApa102() {
 
     setGlobalBrightness(31);
     
-    HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
+    doLedTransfer();
+    // HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
 
 
     // test frame
-    setGlobalBrightness(2);
-    setLed(0, 0xFF0000);
-    setLed(1, 0x00FF00);
-    setLed(2, 0x0000FF);
+    // setGlobalBrightness(2);
+    // setLed(0, 0xFF0000);
+    // setLed(1, 0x00FF00);
+    // setLed(2, 0x0000FF);
 }

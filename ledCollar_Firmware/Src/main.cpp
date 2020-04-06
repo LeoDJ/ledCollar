@@ -29,7 +29,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "globals.h"
-#include "apa102.h"
+#include "led.h"
 #include "sound.h"
 #include "util.h"
 /* USER CODE END Includes */
@@ -109,7 +109,7 @@ int main(void)
   printf("LED Collar Startup...\n");
 
   initSound();
-  initApa102();
+  initLed();
 
   #define MAX_IDLE_COUNT  2255000 // ish
   uint32_t idleCounter = 0, lastCpuCalc = 0;
@@ -125,6 +125,10 @@ int main(void)
       idleCounter = 0;
     }
     idleCounter++;
+
+
+    loopLed();
+
     // HAL_Delay(1);
 
     // printf("test\n");

@@ -14,6 +14,8 @@ void initAnimation(uint16_t numLeds);
 // If using a different LED library, you have to provide functions for hsv 2 rgb conversion and LED setting yourself
 // hsv2rgb expects its parameters in the range of 0-255 and returns a 32 bit RGB value (0x00RRGGBB)
 void initAnimation(uint16_t numLeds, void (*setLed)(uint16_t index, uint32_t rgb), uint32_t (*hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val));
+// use internal hsv2rgb
+void initAnimation(uint16_t numLeds, void (*setLed)(uint16_t index, uint32_t rgb));
 #endif
 
 typedef struct {
@@ -44,3 +46,6 @@ anim_t *getAnimations();
 uint8_t getAnimationCount();
 
 
+#ifndef PROGMEM // ignore PROGMEM keyword if it's not used on the current platform
+#define PROGMEM
+#endif
