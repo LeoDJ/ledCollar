@@ -6,9 +6,11 @@
 #include "globals.h"
 #include "sound.h"
 
-ledData_t ledBuf[NUM_LEDS + 2];
-
-uint8_t ledBufBytes[sizeof(ledBuf)];
+// trailing zeroes protocol quirks: https://cpldcpu.wordpress.com/2014/11/30/understanding-the-apa102-superled/
+// tl;dr clock gets inverted, so for every 2 LEDs, have to shift in additional irrelevant bit (all 0 or 1) so last LEDs get clock pulses too
+#define PADDING_BYTES   (((NUM_LEDS + 15) / 2) / 8) // +15 so it always gets rounded up to the next byte
+uint8_t ledByteBuf[4 + PADDING_BYTES + sizeof(ledData_t) * NUM_LEDS];
+ledData_t* ledBuf = (ledData_t*)&ledByteBuf[4];
 
 void setGlobalBrightness(uint8_t brightness) {
     if(brightness > 31) {
@@ -22,25 +24,25 @@ void setGlobalBrightness(uint8_t brightness) {
 
 void setLed(uint16_t index, uint32_t rgb) {
     if(index < NUM_LEDS) {
-        ledBuf[index + 1].rawColor = rgb;
+        ledBuf[index].rawColor = rgb;
     }
 }
 
 void setLed(uint16_t index, uint8_t r, uint8_t g, uint8_t b) {
     if(index < NUM_LEDS) {
-        ledBuf[index + 1].r = r;
-        ledBuf[index + 1].g = g;
-        ledBuf[index + 1].b = b;
+        ledBuf[index].r = r;
+        ledBuf[index].g = g;
+        ledBuf[index].b = b;
     }
 }
 
 void setLed(uint16_t index, ledData_t data, bool onlyColor) {
     if(index < NUM_LEDS) {
         if(onlyColor) {
-            ledBuf[index + 1].rawColor = data.rawColor;
+            ledBuf[index].rawColor = data.rawColor;
         }
         else {
-            ledBuf[index + 1] = data;
+            ledBuf[index] = data;
         }
     }
 }
@@ -73,7 +75,7 @@ void doLedTransfer() {
     // micMaxVal = (float)micMaxVal / 1.02;
     
     // start new transfer
-    HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
+    HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledByteBuf, sizeof(ledByteBuf));
 }
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
@@ -83,18 +85,15 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 }
 
 void initApa102() {
-    ledBuf[0].raw = 0x00000000;
-    ledBuf[NUM_LEDS + 1].raw = 0xFFFFFFFF;
-
-    for(int i = 1; i < NUM_LEDS + 1; i++) {
+    memset(ledByteBuf, 0, 4);
+    memset(ledByteBuf + 4 + (sizeof(ledData_t) * NUM_LEDS), 0, PADDING_BYTES);
+    for(int i = 0; i < NUM_LEDS; i++) {
         ledBuf[i].start = 0b111;
     }
 
     setGlobalBrightness(31);
     
-    doLedTransfer();
-    // HAL_SPI_Transmit_DMA(&LED_SPI, (uint8_t *) ledBuf, sizeof(ledBuf));
-
+    doLedTransfer(); // initialize LED strip
 
     // test frame
     // setGlobalBrightness(2);
