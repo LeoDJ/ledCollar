@@ -47,6 +47,9 @@ const char* getCurAnimationName();
 // Set base color of animations supporting it, 0xRRGGBB
 void setAnimationBaseColor(uint32_t rgb);
 
+// Set animation intensity, used for e.g. music reactive animations
+void setAnimationIntensity(uint8_t val);
+
 anim_t *getAnimations();
 
 uint8_t getAnimationCount();

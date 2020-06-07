@@ -11,7 +11,7 @@ void initLed() {
     initApa102();
     setGlobalBrightness(4);
     initAnimation(26, setLedFunc);
-    setAnimation((uint8_t)7);
+    setAnimation((uint8_t)8);
 }
 
 uint32_t lastLedUpdate = 0;

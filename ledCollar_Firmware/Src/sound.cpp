@@ -20,6 +20,8 @@ void adcTransferComplete() {
         // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micMaxVal, 2, 100);
     }
 
+    
+
     // doLedTransfer();
 }
 

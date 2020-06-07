@@ -1,9 +1,11 @@
 #include "ledAnimation.h"
 #include <math.h>
+#include "util.h"
 
 uint16_t animationStepIdx = 0;
 uint8_t curAnim = 0;
 uint16_t animNumLeds = 0;
+uint8_t animationIntensity = 128;
 uint32_t (*_hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val);
 uint32_t *animLedBuf = NULL;
 void _setLed(uint16_t index, uint32_t rgb, bool doGamma = true);
@@ -98,8 +100,9 @@ void larssonScanner(bool rainbow) {
 
     uint16_t curPos = (index * animNumLeds) / 256;
     if(rainbow) {
-        uint8_t hue = (animationStepIdx / 8) % 255;
+        uint8_t hue = (animationStepIdx / 8) % 255; // change hue slowly
         _setBufLed(curPos, _hsv2rgb(hue, 255, 255));
+        // _setBufLed(animNumLeds - 1 - curPos, _hsv2rgb((hue + 128) % 256, 255, 255)); // second scanner
     }
     else {
         _setBufLed(curPos, 0xFF0000);
@@ -125,8 +128,8 @@ void larssonScannerRainbow() {
 }
 
 void twinkleStars() {
-    _scaleAll(254);
     if(animationStepIdx % 2 == 0) {
+        _scaleAll(254);
         if(rand() % 8 == 0) {
             uint8_t randColIdx = rand() % randomColorsSize;
             uint32_t color = randomColors[randColIdx];
@@ -134,7 +137,35 @@ void twinkleStars() {
             _setBufLed(randLedPos, color);
         }
     }
-    _updateLeds(false);
+    _updateLeds();
+}
+
+float vu1_percentRed = 0.2;
+float vu1_percentYellow = 0.;
+float vu1_percentGreen = 1 - vu1_percentRed - vu1_percentYellow;
+void vu1() {
+    uint16_t ledCount = map(animationIntensity, 0, 255, 0, (animNumLeds / 2) - 1);
+    uint8_t rightLedOffset = animNumLeds % 2 == 0 ? 1 : 0; // offset other half by 1 if even number of leds exist
+    for(uint16_t i = 0; i < animNumLeds / 2; i++) {
+        uint16_t ledLeftPos = (animNumLeds / 2) - i - rightLedOffset;
+        uint16_t ledRightPos = (animNumLeds / 2) + i;
+        if(i < ledCount) {
+            uint32_t color = 0x00FF00; // green
+            if(i > vu1_percentGreen * (animNumLeds / 2)) {
+                color = 0xFFFF00; // yellow
+            }
+            else if(i > (vu1_percentGreen + vu1_percentYellow) * (animNumLeds / 2)) {
+                color = 0xFF0000; // red
+            }
+            _setBufLed(ledLeftPos, color);
+            _setBufLed(ledRightPos, color);
+        }
+        else {
+            _setBufLed(ledLeftPos, 0);
+            _setBufLed(ledRightPos, 0);
+        }
+    }
+    _updateLeds();
 }
 
 #endif
@@ -150,6 +181,7 @@ anim_t anims[] = {
     {"larsson", larssonScanner},
     {"larssonRainbow", larssonScannerRainbow},
     {"twinkleStars", twinkleStars},
+    {"vu1", vu1},
     #endif
 };
 
@@ -197,6 +229,10 @@ const char* getCurAnimationName() {
 
 void setAnimationBaseColor(uint32_t rgb) {
     animBaseColor = rgb;
+}
+
+void setAnimationIntensity(uint8_t val) {
+    animationIntensity = val;
 }
 
 anim_t *getAnimations() {
