@@ -1,16 +1,24 @@
 #include "ledAnimation.h"
+#include <math.h>
 
 uint16_t animationStepIdx = 0;
 uint8_t curAnim = 0;
 uint16_t animNumLeds = 0;
 uint32_t (*_hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val);
-void _setLed(uint16_t index, uint32_t rgb);
+uint32_t *animLedBuf = NULL;
+void _setLed(uint16_t index, uint32_t rgb, bool doGamma = true);
 void (*_setLedFunc)(uint16_t index, uint32_t rgb);
 uint32_t animBaseColor = 0xFFFFFF;
 void _fillLeds(uint32_t rgb);
+void _scaleAll(uint8_t scale);
 extern const uint8_t PROGMEM gamma8[];
 uint32_t scaleRGBW(uint32_t rgbw, uint8_t scale);
 inline uint32_t internalHsv2rgb(uint8_t hue, uint8_t sat, uint8_t val);
+
+#ifdef ANIMATION_USE_INTERNAL_BUFFER
+void _setBufLed(uint16_t index, uint32_t rgb);
+void _updateLeds(bool doGamma = true);
+#endif
 
 
 /////////////////////////////////////////////
@@ -47,15 +55,77 @@ void fadeUpDown() {
         animationStepIdx = 0;
     }
     uint8_t scale = animationStepIdx < 256 ? animationStepIdx : 511 - animationStepIdx; //count up to 255, then back to zero
-    scale = gamma8[scale];
+    // scale = gamma8[scale];
     _fillLeds(scaleRGBW(animBaseColor, scale));
 }
+
+// like larsson scanner, but only in one direction
+void scanner() {
+    if(animationStepIdx >= 256) {
+        animationStepIdx = 0;
+    }
+
+    for(uint16_t i = 0; i < animNumLeds; i++) {
+        uint16_t ledOffset = (255UL * i) / (animNumLeds - 1);           // calculate individual led offset in animationSteps 
+        uint8_t animStepByLED = (animationStepIdx + ledOffset) % 256;   // calc index at led position with offset and wrap-around
+        float sinVal = cos((animStepByLED / 256.0) * 2 * PI);
+        uint8_t redValue = ((sinVal - 0.75) * 4) * 255.0;
+        _setLed(i, (uint32_t)redValue << 16);
+    }
+}
+
+#ifdef ANIMATION_USE_INTERNAL_BUFFER
+
+void larssonScanner(bool rainbow) {
+    uint16_t aIdx = animationStepIdx % 256;
+    // count up to 255 and then back down, in increments of 2
+    uint8_t index = aIdx % 256 < 128 ? aIdx : 255 - aIdx;
+    index *= 2;
+
+    // dim whole strip to create a trail effect
+    _scaleAll(255 - 20);
+
+    uint16_t curPos = (index * animNumLeds) / 256;
+    if(rainbow) {
+        uint8_t hue = (animationStepIdx / 8) % 255;
+        _setBufLed(curPos, _hsv2rgb(hue, 255, 255));
+    }
+    else {
+        _setBufLed(curPos, 0xFF0000);
+    }
+
+    _updateLeds(false);
+
+    // for(uint16_t i = 0; i < animNumLeds; i++) {
+        // uint16_t ledOffset = ((255UL-64) * i) / (animNumLeds - 1) + 32;   // calculate individual led offset in animationSteps 
+        // uint8_t animStepByLED = (index + ledOffset) % 256;      // calc index at led position with offset and wrap-around
+        // float sinVal = cos((animStepByLED / 256.0) * 2 * PI);
+        // uint8_t redValue = ((sinVal - 0.75) * 4) * 255.0;
+        // _setLed(i, (uint32_t)redValue << 16);
+    // }
+}
+
+void larssonScanner() {
+    larssonScanner(false);
+}
+
+void larssonScannerRainbow() {
+    larssonScanner(true);
+}
+
+#endif
+
 
 anim_t anims[] = {
     {"rainbowScroll", rainbowAnimation},
     {"rainbowFade", rainbowFade},
     {"strobo", blink},
-    {"fadeUpDown", fadeUpDown}
+    {"fadeUpDown", fadeUpDown},
+    {"scanner", scanner},
+    #ifdef ANIMATION_USE_INTERNAL_BUFFER // those animations require the internal buffer
+    {"larsson", larssonScanner},
+    {"larssonRainbow", larssonScannerRainbow},
+    #endif
 };
 
 
@@ -112,6 +182,42 @@ uint8_t getAnimationCount() {
     return numAnims;
 }
 
+#ifdef ANIMATION_USE_INTERNAL_BUFFER
+
+void initBuffer(uint16_t numLeds) {
+    #ifdef ANIMATION_USE_INTERNAL_BUFFER
+        // animLedBuf = malloc(numLeds * sizeof(uint32_t));
+        animLedBuf = new uint32_t[numLeds];
+        if(animLedBuf != NULL) {
+            memset(animLedBuf, 0, animNumLeds * sizeof(uint32_t));
+        }
+    #endif
+}
+
+void _setBufLed(uint16_t index, uint32_t rgb) {
+    if(animLedBuf != NULL && index < animNumLeds) {
+        animLedBuf[index] = rgb;
+    }
+}
+
+void _updateLeds(bool doGamma) {
+    if(animLedBuf != NULL) {
+        for(uint16_t i = 0; i < animNumLeds; i++) {
+            _setLed(i, animLedBuf[i], doGamma);
+        }
+    }
+}
+
+void _scaleAll(uint8_t scale) {
+    if(animLedBuf != NULL) {
+        for(uint16_t i = 0; i < animNumLeds; i++) {
+            animLedBuf[i] = scaleRGBW(animLedBuf[i], scale);
+        }
+    }
+}
+
+#endif
+
 #ifdef ANIMATION_USE_FASTLED
 uint32_t FastLED_hsv2rgb(uint8_t hue, uint8_t sat, uint8_t val) {
     CRGB crgb = CHSV(hue, sat, val);
@@ -129,26 +235,36 @@ void initAnimation(uint16_t numLeds) {
     _setLedFunc = FastLED_setLed;
 }
 #else
-void initAnimation(uint16_t numLeds, void (*setLed)(uint16_t index, uint32_t rgb), uint32_t (*hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val)) {
+void initAnimation( uint16_t numLeds, 
+                    void (*setLed)(uint16_t index, uint32_t rgb), 
+                    uint32_t (*hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val)) {
     animNumLeds = numLeds;
     _hsv2rgb = hsv2rgb;
     _setLedFunc = setLed;
+    initBuffer(numLeds);
 }
 
 // use internal hsv2rgb
-void initAnimation(uint16_t numLeds, void (*setLed)(uint16_t index, uint32_t rgb)) {
+void initAnimation( uint16_t numLeds, 
+                    void (*setLed)(uint16_t index, uint32_t rgb)) {
     initAnimation(numLeds, setLed, internalHsv2rgb);
 }
 #endif
 
-void _setLed(uint16_t index, uint32_t rgb) {
-    uint32_t gammaColor = 0;
-    for(uint8_t i = 0; i < 4; i++) {
-        uint8_t val = (rgb >> (i * 8)) & 0xFF;
-        gammaColor |= gamma8[val] << (i * 8);
+void _setLed(uint16_t index, uint32_t rgb, bool doGamma) {
+    if(doGamma) {
+        uint32_t gammaColor = 0;
+        for(uint8_t i = 0; i < 4; i++) {
+            uint8_t val = (rgb >> (i * 8)) & 0xFF;
+            gammaColor |= gamma8[val] << (i * 8);
+        }
+        _setLedFunc(index, gammaColor);
     }
-    _setLedFunc(index, gammaColor);
+    else {
+        _setLedFunc(index, rgb);
+    }
 }
+
 
 void _fillLeds(uint32_t rgb) {
     for(uint16_t i = 0; i < animNumLeds; i++) {

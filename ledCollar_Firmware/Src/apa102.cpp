@@ -10,7 +10,7 @@
 // tl;dr clock gets inverted, so for every 2 LEDs, have to shift in additional irrelevant bit (all 0 or 1) so last LEDs get clock pulses too
 #define PADDING_BYTES   (((NUM_LEDS + 15) / 2) / 8) // +15 so it always gets rounded up to the next byte
 uint8_t ledByteBuf[4 + PADDING_BYTES + sizeof(ledData_t) * NUM_LEDS];
-ledData_t* ledBuf = (ledData_t*)&ledByteBuf[4];
+ledData_t* ledBuf = (ledData_t*)&ledByteBuf[4]; // skip first 4 init bytes in raw buffer
 
 void setGlobalBrightness(uint8_t brightness) {
     if(brightness > 31) {
@@ -44,6 +44,15 @@ void setLed(uint16_t index, ledData_t data, bool onlyColor) {
         else {
             ledBuf[index] = data;
         }
+    }
+}
+
+uint32_t getLed(uint16_t index) {
+    if(index < NUM_LEDS) {
+        return ledBuf[index].rawColor;
+    }
+    else {
+        return 0;
     }
 }
 
@@ -91,7 +100,7 @@ void initApa102() {
         ledBuf[i].start = 0b111;
     }
 
-    setGlobalBrightness(31);
+    setGlobalBrightness(2);
     
     doLedTransfer(); // initialize LED strip
 

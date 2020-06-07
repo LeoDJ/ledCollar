@@ -28,7 +28,11 @@ void doLedTransfer();
 // sets APA102 brightness register 0-31
 void setGlobalBrightness(uint8_t brightness);
 
+// sets pixel color in 0x00RRGGBB format
 void setLed(uint16_t index, uint32_t rgb);
 void setLed(uint16_t index, uint8_t r, uint8_t g, uint8_t b);
 void setLed(uint16_t index, ledData_t data, bool onlyColor);
 // void setLed(uint16_t index, ledData_t data) {setLed(index, data, true);}
+
+// returns pixel color in 0x00RRGGBB format
+uint32_t getLed(uint16_t index);

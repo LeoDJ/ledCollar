@@ -16,8 +16,8 @@ void adcTransferComplete() {
         }
     }
     for(int i = 0; i < NUM_MIC_SAMPLES; i+=2) {
-        HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micSamples[i], 2, 100);
-        HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micMaxVal, 2, 100);
+        // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micSamples[i], 2, 100);
+        // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micMaxVal, 2, 100);
     }
 
     // doLedTransfer();
