@@ -20,6 +20,17 @@ void _setBufLed(uint16_t index, uint32_t rgb);
 void _updateLeds(bool doGamma = true);
 #endif
 
+uint32_t randomColors[] = {
+    0xFF0000,
+    0xFFFF00,
+    0x00FF00,
+    0x00FFFF,
+    0x0000FF,
+    0xFF00FF,
+    0xFFFFFF
+};
+uint8_t randomColorsSize = sizeof(randomColors) / sizeof(randomColors[0]);
+
 
 /////////////////////////////////////////////
 ///////    Define animations here    ////////
@@ -113,6 +124,19 @@ void larssonScannerRainbow() {
     larssonScanner(true);
 }
 
+void twinkleStars() {
+    _scaleAll(254);
+    if(animationStepIdx % 2 == 0) {
+        if(rand() % 8 == 0) {
+            uint8_t randColIdx = rand() % randomColorsSize;
+            uint32_t color = randomColors[randColIdx];
+            uint16_t randLedPos = rand() % animNumLeds;
+            _setBufLed(randLedPos, color);
+        }
+    }
+    _updateLeds(false);
+}
+
 #endif
 
 
@@ -125,6 +149,7 @@ anim_t anims[] = {
     #ifdef ANIMATION_USE_INTERNAL_BUFFER // those animations require the internal buffer
     {"larsson", larssonScanner},
     {"larssonRainbow", larssonScannerRainbow},
+    {"twinkleStars", twinkleStars},
     #endif
 };
 
