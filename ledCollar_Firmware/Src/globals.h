@@ -7,3 +7,5 @@
 
 extern UART_HandleTypeDef   PRINTF_UART;
 extern UART_HandleTypeDef   DEBUG_UART;
+
+#define PI 3.141592653589793
