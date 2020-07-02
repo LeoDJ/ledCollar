@@ -8,9 +8,6 @@ uint16_t micSamples[NUM_MIC_SAMPLES];
 uint16_t micMaxVal = 0;
 
 
-#define SAMPLING_RATE   64000
-#define TARGET_FREQ     75
-#define N               NUM_MIC_SAMPLES // block size
 
 float gCoeff, gQ1, gQ2, gSine, gCosine;
 
@@ -23,10 +20,11 @@ void goertzelInit() {
     int k;
     float floatN, omega;
 
-    floatN = (float)N;
-    k = (int)(0.5 + ((floatN * TARGET_FREQ) / SAMPLING_RATE));
-    omega = (2.0 * PI * k) / floatN;
-    gSine = sin(omega);
+    floatN = (float)BLOCK_SIZE;
+    // k = (int)(0.5 + ((floatN * TARGET_FREQ) / SAMPLING_RATE));
+    // omega = (2.0 * PI * k) / floatN;
+    // gSine = sin(omega);
+    omega = (2.0 * PI * TARGET_FREQ) / SAMPLING_RATE;
     gCosine = cos(omega);
     gCoeff = 2.0 * gCosine;
 
@@ -36,7 +34,7 @@ void goertzelInit() {
 // call after every sample
 void goertzelProcessSample(uint16_t sample) {
     float Q0;
-    Q0 = gCoeff * gQ1 - gQ2 + (float)sample;
+    Q0 = gCoeff * gQ1 - gQ2 + (float)(sample) - ADC_CENTER;
     gQ2 = gQ1;
     gQ1 = Q0;
 }
@@ -47,24 +45,28 @@ float goertzelGetMagnitudeSquared() {
     return result;
 }
 
-// 1khz tone = 48 samples @ 240 cycles / sample @ 12MHz ADC clock = 50ksps
+float goertzelVal = 0;
 
+// 240 cycles / sample @ 9MHz ADC clock = 37.5ksps
 void adcTransferComplete() {
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     for(int i = 0; i < NUM_MIC_SAMPLES; i++) {
-        if(micSamples[i] > micMaxVal) {
-            micMaxVal = micSamples[i];
+        // if(micSamples[i] > micMaxVal) {
+        //     micMaxVal = micSamples[i];
+        // }
+        if(i % SAMPLING_DIV == 0) {
+            goertzelProcessSample(micSamples[i]);
         }
-        goertzelProcessSample(micSamples[i] << 4);
     }
-    float magn = sqrt(goertzelGetMagnitudeSquared());
+    goertzelVal = sqrt(goertzelGetMagnitudeSquared());
     goertzelReset();
-    for(int i = 0; i < NUM_MIC_SAMPLES; i+=3) {
-        HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micSamples[i], 2, 100);
+    uint16_t value = goertzelVal;
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&value, 2, 1);
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micSamples[NUM_MIC_SAMPLES-1], 2, 1);
+
+    // for(int i = 0; i < NUM_MIC_SAMPLES; i+=3) {
         // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micMaxVal, 2, 100);
-        uint16_t value = magn;
-        HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&value, 2, 100);
-    }
+    // }
 
     
 
