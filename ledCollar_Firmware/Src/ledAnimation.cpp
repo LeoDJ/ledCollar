@@ -57,10 +57,10 @@ void rainbowFade() {
 }
 
 void blink() {
-    if(animationStepIdx >= 2) {
+    if(animationStepIdx >= 4) {
         animationStepIdx = 0;
     }
-    _fillLeds((animationStepIdx) ? 0 : 0xFFFFFFFF);
+    _fillLeds((animationStepIdx / 2) ? 0 : 0xFFFFFFFF);
 }
 
 void fadeUpDown() {
@@ -140,8 +140,8 @@ void twinkleStars() {
     _updateLeds();
 }
 
-float vu1_percentRed = 0.2;
-float vu1_percentYellow = 0.;
+float vu1_percentRed = 0.3;
+float vu1_percentYellow = 0.3;
 float vu1_percentGreen = 1 - vu1_percentRed - vu1_percentYellow;
 void vu1() {
     uint16_t ledCount = map(animationIntensity, 0, 255, 0, (animNumLeds / 2) - 1);
@@ -154,7 +154,7 @@ void vu1() {
             if(i > vu1_percentGreen * (animNumLeds / 2)) {
                 color = 0xFFFF00; // yellow
             }
-            else if(i > (vu1_percentGreen + vu1_percentYellow) * (animNumLeds / 2)) {
+            if(i > (vu1_percentGreen + vu1_percentYellow) * (animNumLeds / 2)) {
                 color = 0xFF0000; // red
             }
             _setBufLed(ledLeftPos, color);
