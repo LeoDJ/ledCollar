@@ -140,21 +140,22 @@ void twinkleStars() {
     _updateLeds();
 }
 
-float vu1_percentRed = 0.3;
-float vu1_percentYellow = 0.3;
+float vu1_percentRed = 0.25;
+float vu1_percentYellow = 0.32;
 float vu1_percentGreen = 1 - vu1_percentRed - vu1_percentYellow;
 void vu1() {
-    uint16_t ledCount = map(animationIntensity, 0, 255, 0, (animNumLeds / 2) - 1);
+    uint16_t midPoint = (animNumLeds / 2);
+    uint16_t ledCount = map(animationIntensity, 0, 255, 0, midPoint + 1);
     uint8_t rightLedOffset = animNumLeds % 2 == 0 ? 1 : 0; // offset other half by 1 if even number of leds exist
-    for(uint16_t i = 0; i < animNumLeds / 2; i++) {
-        uint16_t ledLeftPos = (animNumLeds / 2) - i - rightLedOffset;
-        uint16_t ledRightPos = (animNumLeds / 2) + i;
+    for(uint16_t i = 0; i <= midPoint; i++) {
+        uint16_t ledLeftPos = midPoint - i - rightLedOffset;
+        uint16_t ledRightPos = midPoint + i;
         if(i < ledCount) {
             uint32_t color = 0x00FF00; // green
-            if(i > vu1_percentGreen * (animNumLeds / 2)) {
+            if(i > vu1_percentGreen * midPoint) {
                 color = 0xFFFF00; // yellow
             }
-            if(i > (vu1_percentGreen + vu1_percentYellow) * (animNumLeds / 2)) {
+            if(i > (vu1_percentGreen + vu1_percentYellow) * midPoint) {
                 color = 0xFF0000; // red
             }
             _setBufLed(ledLeftPos, color);

@@ -4,14 +4,16 @@
 
 // TODO: remove function when using LED strip with correct length
 void setLedFunc(uint16_t index, uint32_t rgb) {
-    setLed(index + 102, rgb);
+    setLed(index + 103, rgb);
 }
 
 void initLed() {
     initApa102();
     setGlobalBrightness(4);
-    initAnimation(26, setLedFunc);
+    initAnimation(25, setLedFunc);
     setAnimation((uint8_t)8);
+    // setAnimationIntensity(255);
+    // stepAnimation();
 }
 
 uint32_t lastLedUpdate = 0;
