@@ -19,6 +19,7 @@ inline uint32_t internalHsv2rgb(uint8_t hue, uint8_t sat, uint8_t val);
 
 #ifdef ANIMATION_USE_INTERNAL_BUFFER
 void _setBufLed(uint16_t index, uint32_t rgb);
+uint32_t _getBufLed(uint16_t index);
 void _updateLeds(bool doGamma = true);
 #endif
 
@@ -153,7 +154,7 @@ void vu1() {
         if(i < ledCount) {
             uint32_t color = 0x00FF00; // green
             if(i > vu1_percentGreen * midPoint) {
-                color = 0xFFFF00; // yellow
+                color = 0xFFCF00; // yellow
             }
             if(i > (vu1_percentGreen + vu1_percentYellow) * midPoint) {
                 color = 0xFF0000; // red
@@ -166,6 +167,36 @@ void vu1() {
             _setBufLed(ledRightPos, 0);
         }
     }
+    _updateLeds();
+}
+
+#define ANIM_PULSES_THRESH 160
+uint8_t pulsesColor = 0;
+void pulses() {
+    uint16_t midPoint = (animNumLeds / 2);
+    uint8_t rightLedOffset = animNumLeds % 2 == 0 ? 1 : 0; // offset other half by 1 if even number of leds exist
+    
+    if(animationStepIdx % 3 == 0) {
+        animationStepIdx = 0;
+
+        // move buffer content sideways
+        for(uint16_t i = 0; i < midPoint; i++) {
+            uint16_t leftLedPos = i;
+            uint16_t rightLedPos = animNumLeds - 1 - i;
+            _setBufLed(leftLedPos, _getBufLed(leftLedPos + 1));
+            _setBufLed(rightLedPos, _getBufLed(rightLedPos - 1));
+        }
+        _setBufLed(midPoint, 0);
+        _setBufLed(midPoint - rightLedOffset, 0);
+    }
+
+    if(animationIntensity > ANIM_PULSES_THRESH) {
+        uint32_t color = _hsv2rgb(pulsesColor, 255, 255);
+        _setBufLed(midPoint, color);
+        _setBufLed(midPoint - rightLedOffset, color);
+        pulsesColor+=4;
+    }
+
     _updateLeds();
 }
 
@@ -183,6 +214,7 @@ anim_t anims[] = {
     {"larssonRainbow", larssonScannerRainbow},
     {"twinkleStars", twinkleStars},
     {"vu1", vu1},
+    {"pulses", pulses}
     #endif
 };
 
@@ -259,6 +291,12 @@ void initBuffer(uint16_t numLeds) {
 void _setBufLed(uint16_t index, uint32_t rgb) {
     if(animLedBuf != NULL && index < animNumLeds) {
         animLedBuf[index] = rgb;
+    }
+}
+
+uint32_t _getBufLed(uint16_t index) {
+    if(animLedBuf != NULL && index < animNumLeds) {
+        return animLedBuf[index];
     }
 }
 

@@ -11,7 +11,7 @@ void initLed() {
     initApa102();
     setGlobalBrightness(4);
     initAnimation(25, setLedFunc);
-    setAnimation((uint8_t)8);
+    setAnimation("pulses");
     // setAnimationIntensity(255);
     // stepAnimation();
 }
