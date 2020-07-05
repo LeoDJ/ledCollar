@@ -1,0 +1,3 @@
+[submodule "ledCollar_PCB/lib_includes/LeoDJ-kicad"]
+	path = ledCollar_PCB/lib_includes/LeoDJ-kicad
+	url = https://github.com/LeoDJ/LeoDJ-kicad
