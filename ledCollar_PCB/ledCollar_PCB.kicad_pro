@@ -31,13 +31,13 @@
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
-        "silk_text_size_h": 1.0,
-        "silk_text_size_v": 1.0,
-        "silk_text_thickness": 0.15,
+        "silk_text_size_h": 0.762,
+        "silk_text_size_v": 0.762,
+        "silk_text_thickness": 0.127,
         "silk_text_upright": false,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.508
+          "min_clearance": 0.254
         }
       },
       "diff_pair_dimensions": [
@@ -103,7 +103,11 @@
       },
       "track_widths": [
         0.25,
-        0.127
+        0.127,
+        0.5,
+        0.75,
+        1.0,
+        1.5
       ],
       "via_dimensions": [
         {
@@ -126,6 +130,151 @@
     "meta": {
       "version": 0
     },
+    "pin_map": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        1,
+        2,
+        0,
+        1,
+        0,
+        2,
+        2,
+        2,
+        2
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        2,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        2
+      ],
+      [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    ],
     "rule_severities": {
       "bus_definition_conflict": "error",
       "bus_label_syntax": "error",
@@ -167,76 +316,6 @@
         "diff_pair_width": 0.2,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
-        "name": "Default",
-        "nets": [
-          "+3V3",
-          "/MICBIAS",
-          "/MICIN",
-          "BTN",
-          "GND",
-          "LED_ENABLE",
-          "MIC_OUT",
-          "MPU_IRQ",
-          "NRF_CE",
-          "NRF_IRQ",
-          "Net-(C12-Pad1)",
-          "Net-(C13-Pad1)",
-          "Net-(C5-Pad1)",
-          "Net-(C6-Pad1)",
-          "Net-(C7-Pad1)",
-          "Net-(C8-Pad1)",
-          "Net-(J3-Pad1)",
-          "Net-(R4-Pad1)",
-          "Net-(R5-Pad2)",
-          "Net-(U1-Pad4)",
-          "Net-(U2-Pad11)",
-          "Net-(U2-Pad12)",
-          "Net-(U2-Pad13)",
-          "Net-(U2-Pad14)",
-          "Net-(U2-Pad15)",
-          "Net-(U2-Pad16)",
-          "Net-(U2-Pad17)",
-          "Net-(U2-Pad2)",
-          "Net-(U2-Pad27)",
-          "Net-(U2-Pad29)",
-          "Net-(U2-Pad3)",
-          "Net-(U2-Pad30)",
-          "Net-(U2-Pad31)",
-          "Net-(U2-Pad32)",
-          "Net-(U2-Pad33)",
-          "Net-(U2-Pad4)",
-          "Net-(U2-Pad45)",
-          "Net-(U2-Pad46)",
-          "Net-(U2-Pad5)",
-          "Net-(U2-Pad6)",
-          "Net-(U2-Pad7)",
-          "Net-(U4-Pad9)",
-          "Net-(U5-Pad6)",
-          "Net-(U5-Pad7)",
-          "SCL",
-          "SDA",
-          "SPI1_CIPO",
-          "SPI1_COPI",
-          "SPI1_CS",
-          "SPI1_SCK",
-          "SPI2_COPI",
-          "SPI2_SCK",
-          "SWCLK",
-          "SWDIO",
-          "VCC",
-          "V_SENSE"
-        ],
-        "track_width": 0.25,
-        "via_diameter": 0.8,
-        "via_drill": 0.4
-      },
-      {
-        "clearance": 0.2,
-        "diff_pair_gap": 0.25,
-        "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.2,
-        "microvia_diameter": 0.3,
-        "microvia_drill": 0.1,
         "name": "Smallest",
         "nets": [],
         "track_width": 0.25,
@@ -246,7 +325,8 @@
     ],
     "meta": {
       "version": 0
-    }
+    },
+    "net_colors": null
   },
   "pcbnew": {
     "last_paths": {
@@ -284,7 +364,7 @@
   },
   "sheets": [
     [
-      "91dd443f-2186-4e4a-bd0f-e476d12cbdae",
+      "e048205d-ce4f-4674-8b03-d752cba1e849",
       ""
     ]
   ],
