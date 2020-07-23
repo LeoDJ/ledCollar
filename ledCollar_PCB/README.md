@@ -9,4 +9,4 @@
 | ![front3D](doc/2top.png) | ![back3D](doc/2bot.png) |
 
 ## Project Installation
-Make sure to run git clone with --recurse-submodules to include the necessary libraries too.
+Make sure to run `git clone` with `--recurse-submodules` to include the necessary libraries too.
