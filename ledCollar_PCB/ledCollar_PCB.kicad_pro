@@ -327,7 +327,9 @@
           "BTN",
           "GND",
           "LED_ENABLE",
+          "LED_GND",
           "LIGHT_SENSE",
+          "MIC_ENABLE",
           "MIC_OUT",
           "MPU_IRQ",
           "NRF_CE",
@@ -361,7 +363,6 @@
           "Net-(U2-Pad4)",
           "Net-(U2-Pad5)",
           "Net-(U2-Pad6)",
-          "Net-(U2-Pad7)",
           "Net-(U4-Pad9)",
           "Net-(U5-Pad6)",
           "Net-(U5-Pad7)",
@@ -437,7 +438,7 @@
   },
   "sheets": [
     [
-      "3c85e2f7-4a18-483e-940d-c7d563d09301",
+      "6cf357da-9b4c-465b-b7bc-bba5cc7de0cc",
       ""
     ]
   ],
