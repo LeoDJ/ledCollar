@@ -1,5 +1,6 @@
 # LED Collar PCB
 
+### [Schematic PDF](ledCollar_PCB.pdf)
 ### [Interactive BOM](https://leodj.github.io/ledCollar/ledCollar_PCB/doc/ledCollar_PCB-ibom.html)
 
 ## Pictures
