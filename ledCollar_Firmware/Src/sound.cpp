@@ -82,6 +82,7 @@ void adcTransferComplete() {
     float scaledOutputForBeatDetection = (MIN(smoothVal - troughVal, peakVal - troughVal) / (peakVal - troughVal)) * 255.0;
 
     setAnimationIntensity(scaledOutput);
+    setAnimationIntensityBeatDetect(scaledOutputForBeatDetection);
 
     
 

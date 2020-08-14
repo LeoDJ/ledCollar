@@ -5,7 +5,7 @@
 uint16_t animationStepIdx = 0;
 uint8_t curAnim = 0;
 uint16_t animNumLeds = 0;
-uint8_t animationIntensity = 128;
+uint8_t animationIntensity = 128, animationIntensityBeatDetect = 128;
 uint32_t (*_hsv2rgb)(uint8_t hue, uint8_t sat, uint8_t val);
 uint32_t *animLedBuf = NULL;
 void _setLed(uint16_t index, uint32_t rgb, bool doGamma = true);
@@ -170,7 +170,7 @@ void vu1() {
     _updateLeds();
 }
 
-#define ANIM_PULSES_THRESH 160
+#define ANIM_PULSES_THRESH 127
 uint8_t pulsesColor = 0;
 void pulses() {
     uint16_t midPoint = (animNumLeds / 2);
@@ -190,8 +190,9 @@ void pulses() {
         _setBufLed(midPoint - rightLedOffset, 0);
     }
 
-    if(animationIntensity > ANIM_PULSES_THRESH) {
+    if(animationIntensityBeatDetect > ANIM_PULSES_THRESH) {
         uint32_t color = _hsv2rgb(pulsesColor, 255, 255);
+        // uint32_t color = _hsv2rgb(pulsesColor, 255, map(animationIntensityBeatDetect, ANIM_PULSES_THRESH, 255, 64, 255)); // didn't look too good
         _setBufLed(midPoint, color);
         _setBufLed(midPoint - rightLedOffset, color);
         pulsesColor+=4;
@@ -266,6 +267,10 @@ void setAnimationBaseColor(uint32_t rgb) {
 
 void setAnimationIntensity(uint8_t val) {
     animationIntensity = val;
+}
+
+void setAnimationIntensityBeatDetect(uint8_t val) {
+    animationIntensityBeatDetect = val;
 }
 
 anim_t *getAnimations() {

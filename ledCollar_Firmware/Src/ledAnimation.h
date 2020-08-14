@@ -50,6 +50,9 @@ void setAnimationBaseColor(uint32_t rgb);
 // Set animation intensity, used for e.g. music reactive animations
 void setAnimationIntensity(uint8_t val);
 
+// Set animation intensity optimized for beat detection, used for e.g. music reactive animations
+void setAnimationIntensityBeatDetect(uint8_t val);
+
 anim_t *getAnimations();
 
 uint8_t getAnimationCount();
