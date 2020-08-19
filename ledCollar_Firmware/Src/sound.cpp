@@ -18,6 +18,7 @@ uint8_t bassSmoothIndex = 0;
 
 // 240 cycles / sample @ 9MHz ADC clock = 37.5ksps
 // the measured sample count is more like 35750 samples/s
+// 240 cycles / sample @ 8MHz ADC clock = 33333 samples/s
 void adcTransferComplete() {
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 
@@ -87,14 +88,14 @@ void adcTransferComplete() {
     
 
     float micVal = micSamples[NUM_MIC_SAMPLES-1] * 25;
-    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micVal, 4, 1);
+    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micVal, 4, 1);
     // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&filterVal, 4, 1);
     // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&midpointAvg, 4, 1);
-    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&absVal, 4, 1);
-    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&peakVal, 4, 1);
-    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&troughVal, 4, 1);
-    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&smoothVal, 4, 1);
-    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&scaledOutput, 4, 1);
+    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&absVal, 4, 1);
+    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&peakVal, 4, 1);
+    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&troughVal, 4, 1);
+    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&smoothVal, 4, 1);
+    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&scaledOutput, 4, 1);
 
 }
 

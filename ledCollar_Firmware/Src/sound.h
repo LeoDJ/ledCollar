@@ -1,9 +1,10 @@
 #pragma once
 #include <stdint.h>
 
-
+#define ADC_CLOCK 8000000
+#define ADC_SAMPLING_CYCLES  240
 #define SAMPLING_DIV    4
-#define SAMPLING_RATE   (35750 / SAMPLING_DIV)
+#define SAMPLING_RATE   (ADC_CLOCK / ADC_SAMPLING_CYCLES / SAMPLING_DIV)
 #define TARGET_FREQ     75 // 45
 #define BLOCK_SIZE      32 // block size
 // #define ADC_CENTER      1430

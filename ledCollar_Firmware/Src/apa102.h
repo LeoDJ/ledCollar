@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
-#define NUM_LEDS        128
+#define NUM_LEDS        24
 #define MAX_UPDATE_RATE 250 // FPS
 
 #pragma pack(push, 1)

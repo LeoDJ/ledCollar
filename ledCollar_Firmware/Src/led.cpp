@@ -3,15 +3,15 @@
 #include "ledAnimation.h"
 
 // TODO: remove function when using LED strip with correct length
-void setLedFunc(uint16_t index, uint32_t rgb) {
-    setLed(index + 103, rgb);
-}
+// void setLedFunc(uint16_t index, uint32_t rgb) {
+//     setLed(index + 103, rgb);
+// }
 
 void initLed() {
     initApa102();
-    setGlobalBrightness(4);
-    initAnimation(25, setLedFunc);
-    setAnimation("pulses");
+    setGlobalBrightness(3);
+    initAnimation(NUM_LEDS, setLed);
+    setAnimation("larssonRainbow");
     // setAnimationIntensity(255);
     // stepAnimation();
 }

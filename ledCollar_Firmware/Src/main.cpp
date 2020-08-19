@@ -22,6 +22,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "i2c.h"
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
@@ -99,35 +100,46 @@ int main(void)
   MX_USART1_UART_Init();
   MX_ADC1_Init();
   MX_USART2_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  _printf("LED Collar Startup...\n");
+  // _printf("LED Collar Startup...\n");
 
 
   initSound();
   initLed();
 
-  #define MAX_IDLE_COUNT  2255000 // ish
-  uint32_t idleCounter = 0, lastCpuCalc = 0;
+  HAL_GPIO_WritePin(MIC_ENABLE_GPIO_Port, MIC_ENABLE_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_ENABLE_GPIO_Port, LED_ENABLE_Pin, GPIO_PIN_SET);
+
+  // #define MAX_IDLE_COUNT  2255000 // ish
+  // uint32_t idleCounter = 0, lastCpuCalc = 0;
+
+  uint32_t lastTime = 0;
 
   while (1)
   {
-    if(HAL_GetTick() - lastCpuCalc > 1000) {
-      lastCpuCalc = HAL_GetTick();
-      int delta = MAX_IDLE_COUNT - (int)idleCounter;
-      delta = delta < 0 ? 0 : delta;
-      int cpu = (delta * 1000LL) / MAX_IDLE_COUNT;
-      _printf("CPU usage estimation: %3d.%d%%\n", cpu/10, cpu%10);
-      idleCounter = 0;
-    }
-    idleCounter++;
+    // if(HAL_GetTick() - lastCpuCalc > 1000) {
+    //   lastCpuCalc = HAL_GetTick();
+    //   int delta = MAX_IDLE_COUNT - (int)idleCounter;
+    //   delta = delta < 0 ? 0 : delta;
+    //   int cpu = (delta * 1000LL) / MAX_IDLE_COUNT;
+    //   _printf("CPU usage estimation: %3d.%d%%\n", cpu/10, cpu%10);
+    //   idleCounter = 0;
+    // }
+    // idleCounter++;
 
 
     loopLed();
+    // if(HAL_GetTick() - lastTime > 100) {
+    //   lastTime = HAL_GetTick();
+      // HAL_GPIO_TogglePin(LED_ENABLE_GPIO_Port, LED_ENABLE_Pin);
+    // }
+    // HAL_Delay(100);
 
     // HAL_Delay(1);
 
@@ -159,13 +171,12 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI_DIV2;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
