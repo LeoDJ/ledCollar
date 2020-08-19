@@ -60,6 +60,22 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_BUILTIN_Pin GPIO_PIN_13
 #define LED_BUILTIN_GPIO_Port GPIOC
+#define MIC_ENABLE_Pin GPIO_PIN_1
+#define MIC_ENABLE_GPIO_Port GPIOA
+#define MIC_IN_Pin GPIO_PIN_7
+#define MIC_IN_GPIO_Port GPIOA
+#define LIGHT_SENSE_Pin GPIO_PIN_0
+#define LIGHT_SENSE_GPIO_Port GPIOB
+#define VSense_Pin GPIO_PIN_1
+#define VSense_GPIO_Port GPIOB
+#define MPU_IRQ_Pin GPIO_PIN_2
+#define MPU_IRQ_GPIO_Port GPIOB
+#define LED_ENABLE_Pin GPIO_PIN_12
+#define LED_ENABLE_GPIO_Port GPIOB
+#define NRF_CE_Pin GPIO_PIN_6
+#define NRF_CE_GPIO_Port GPIOB
+#define NRF_IRQ_Pin GPIO_PIN_7
+#define NRF_IRQ_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
