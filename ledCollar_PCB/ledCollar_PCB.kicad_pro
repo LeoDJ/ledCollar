@@ -321,7 +321,6 @@
         "name": "Default",
         "nets": [
           "+3V3",
-          "/LED_GND",
           "/MICBIAS",
           "/MICIN",
           "BTN",
@@ -344,7 +343,6 @@
           "Net-(R4-Pad1)",
           "Net-(R5-Pad2)",
           "Net-(U1-Pad4)",
-          "Net-(U2-Pad11)",
           "Net-(U2-Pad12)",
           "Net-(U2-Pad13)",
           "Net-(U2-Pad14)",
@@ -408,7 +406,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "ledCollar_PCB.step",
       "vmrl": ""
     },
     "page_layout_descr_file": ""
