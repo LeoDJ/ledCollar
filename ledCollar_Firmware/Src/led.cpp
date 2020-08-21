@@ -1,17 +1,20 @@
 #include "led.h"
 #include "apa102.h"
-#include "ledAnimation.h"
 
 // TODO: remove function when using LED strip with correct length
 // void setLedFunc(uint16_t index, uint32_t rgb) {
 //     setLed(index + 103, rgb);
 // }
 
+uint8_t currentAnimation = 0;
+
+
 void initLed() {
     initApa102();
     setGlobalBrightness(3);
     initAnimation(NUM_LEDS, setLed);
-    setAnimation("larssonRainbow");
+    setAnimation(currentAnimation);
+    // setAnimation("vu1");
     // setAnimationIntensity(255);
     // stepAnimation();
 }
@@ -26,4 +29,12 @@ void loopLed() {
         stepAnimation();
         doLedTransfer();
     }
+}
+
+void ledNextAnimation() {
+    currentAnimation++;
+    if(currentAnimation >= getAnimationCount()) {
+        currentAnimation = 0;
+    }
+    setAnimation(currentAnimation);
 }

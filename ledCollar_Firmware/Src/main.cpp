@@ -33,6 +33,7 @@
 #include "led.h"
 #include "sound.h"
 #include "util.h"
+#include "button.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -135,6 +136,7 @@ int main(void)
 
 
     loopLed();
+    buttonLoop();
     // if(HAL_GetTick() - lastTime > 100) {
     //   lastTime = HAL_GetTick();
       // HAL_GPIO_TogglePin(LED_ENABLE_GPIO_Port, LED_ENABLE_Pin);
