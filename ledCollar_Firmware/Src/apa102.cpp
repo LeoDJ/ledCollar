@@ -8,7 +8,7 @@
 
 // trailing zeroes protocol quirks: https://cpldcpu.wordpress.com/2014/11/30/understanding-the-apa102-superled/
 // tl;dr clock gets inverted, so for every 2 LEDs, have to shift in additional irrelevant bit (all 0 or 1) so last LEDs get clock pulses too
-#define PADDING_BYTES   (((NUM_LEDS + 15) / 2) / 8) // +15 so it always gets rounded up to the next byte
+#define PADDING_BYTES   (((NUM_LEDS + 15) / 2 / 8) + 4) // +15 so it always gets rounded up to the next byte, +4 for the end frame
 uint8_t ledByteBuf[4 + PADDING_BYTES + sizeof(ledData_t) * NUM_LEDS];
 ledData_t* ledBuf = (ledData_t*)&ledByteBuf[4]; // skip first 4 init bytes in raw buffer
 
@@ -17,7 +17,7 @@ void setGlobalBrightness(uint8_t brightness) {
         brightness = 31;
     }
 
-    for(int i = 1; i < NUM_LEDS + 1; i++) {
+    for(int i = 0; i < NUM_LEDS; i++) {
         ledBuf[i].global = brightness;
     }
 }
