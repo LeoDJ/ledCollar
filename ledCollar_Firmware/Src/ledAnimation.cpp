@@ -146,7 +146,9 @@ float vu1_percentYellow = 0.32;
 float vu1_percentGreen = 1 - vu1_percentRed - vu1_percentYellow;
 void vu1() {
     uint16_t midPoint = (animNumLeds / 2);
-    uint16_t ledCount = map(animationIntensity, 0, 255, 0, midPoint + 1);
+    // uint16_t ledCount = map(animationIntensity, 0, 255, 0, midPoint + 1);
+    uint16_t ledCount = animationIntensity * (midPoint + 1) / 255;
+    uint8_t lastLedIntensity = animationIntensity * (midPoint + 1) % 255;
     uint8_t rightLedOffset = animNumLeds % 2 == 0 ? 1 : 0; // offset other half by 1 if even number of leds exist
     for(uint16_t i = 0; i <= midPoint; i++) {
         uint16_t ledLeftPos = midPoint - i - rightLedOffset;
@@ -159,6 +161,11 @@ void vu1() {
             if(i > (vu1_percentGreen + vu1_percentYellow) * midPoint) {
                 color = 0xFF0000; // red
             }
+
+            if(i == ledCount - 1) {
+                color = scaleRGBW(color, lastLedIntensity);
+            }
+
             _setBufLed(ledLeftPos, color);
             _setBufLed(ledRightPos, color);
         }
@@ -203,8 +210,19 @@ void pulses() {
 
 #endif
 
+void debug() {
+    for(int i = 0; i < animNumLeds; i++) {
+        if(i < animationIntensity) {
+            _setLed(i, 0xFFFFFF);
+        }
+        else {
+            _setLed(i, 0);
+        }
+    }
+}
 
 anim_t anims[] = {
+    // {"debug", debug},
     {"rainbowScroll", rainbowAnimation},
     {"rainbowFade", rainbowFade},
     {"strobo", blink},
