@@ -15,6 +15,7 @@ float midpointAvg = 0, peakVal = 0, troughVal = 0;
 uint32_t lastPeak;
 uint16_t bassSmoothValues[BASS_SMOOTH_COUNT];
 uint8_t bassSmoothIndex = 0;
+uint8_t firstIteration = 0;
 
 // 240 cycles / sample @ 9MHz ADC clock = 37.5ksps
 // the measured sample count is more like 35750 samples/s
@@ -30,6 +31,12 @@ void adcTransferComplete() {
         }
     }
     float filterVal = filter.calculateMagnitude();
+
+    // skip first x iterations for the filter to settle
+    if(firstIteration < 100) {
+        firstIteration++;
+        return;
+    }
 
     // keep the midpoint of the waveform
     if(midpointAvg == 0) {
@@ -87,14 +94,15 @@ void adcTransferComplete() {
 
     
 
-    float micVal = micSamples[NUM_MIC_SAMPLES-1] * 25;
-    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micVal, 4, 1);
-    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&filterVal, 4, 1);
+    float micVal = micSamples[NUM_MIC_SAMPLES-1] * 10;
+    // filterVal /= 10;
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&micVal, 4, 1);
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&filterVal, 4, 1);
     // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&midpointAvg, 4, 1);
-    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&absVal, 4, 1);
-    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&peakVal, 4, 1);
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&absVal, 4, 1);
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&peakVal, 4, 1);
     // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&troughVal, 4, 1);
-    // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&smoothVal, 4, 1);
+    HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&smoothVal, 4, 1);
     // HAL_UART_Transmit(&DEBUG_UART, (uint8_t *)&scaledOutput, 4, 1);
 
 }
