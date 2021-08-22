@@ -6,12 +6,12 @@
 //     setLed(index + 103, rgb);
 // }
 
-uint8_t currentAnimation = 0;
+uint8_t currentAnimation = 5;
 
 
 void initLed() {
     initApa102();
-    setGlobalBrightness(3);
+    setGlobalBrightness(1);
     initAnimation(NUM_LEDS, setLed);
     setAnimation(currentAnimation);
     // setAnimation("vu1");

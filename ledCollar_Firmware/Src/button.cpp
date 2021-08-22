@@ -1,5 +1,6 @@
 #include "button.h"
 #include "led.h"
+#include <stdio.h>
 
 uint32_t btnLastChange[btnCount];
 click_t btnLastState[btnCount];
@@ -29,6 +30,7 @@ void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_
 
 void HAL_GPIO_EXTI_Callback(uint16_t pin) {
     // search button pin in button definition
+    // printf("%8d %d", HAL_GetTick(), HAL_GPIO_ReadPin(btnPort[0], btnPin[0]));
     for(uint8_t i = 0; i < btnCount; i++) {
         if(btnPin[i] == pin) {
             uint8_t btnState = HAL_GPIO_ReadPin(btnPort[i], btnPin[i]);
@@ -42,11 +44,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin) {
                         btnLastState[i] = (click_t)(btnLastState[i] + 1);
                     }
 
+                    // printf(" %d",  btnLastState[0]);
+
                     btnLastChange[i] = HAL_GetTick();
                 }
             // }
         }
     }
+    // printf("\n");
 }
 
 void buttonInit() {

@@ -225,9 +225,9 @@ anim_t anims[] = {
     // {"debug", debug},
     {"rainbowScroll", rainbowAnimation},
     {"rainbowFade", rainbowFade},
-    {"strobo", blink},
-    {"fadeUpDown", fadeUpDown},
-    {"scanner", scanner},
+    // {"strobo", blink},
+    // {"fadeUpDown", fadeUpDown},
+    // {"scanner", scanner},
     #ifdef ANIMATION_USE_INTERNAL_BUFFER // those animations require the internal buffer
     {"larsson", larssonScanner},
     {"larssonRainbow", larssonScannerRainbow},
