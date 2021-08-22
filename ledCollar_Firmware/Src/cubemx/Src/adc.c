@@ -81,6 +81,7 @@ void MX_ADC1_Init(void)
   */
   sConfigInjected.InjectedChannel = ADC_CHANNEL_VREFINT;
   sConfigInjected.InjectedRank = ADC_INJECTED_RANK_3;
+  sConfigInjected.InjectedSamplingTime = ADC_SAMPLETIME_41CYCLES_5;
   if (HAL_ADCEx_InjectedConfigChannel(&hadc1, &sConfigInjected) != HAL_OK)
   {
     Error_Handler();
