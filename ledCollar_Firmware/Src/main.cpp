@@ -29,11 +29,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+
 #include "globals.h"
 #include "led.h"
 #include "sound.h"
 #include "util.h"
 #include "button.h"
+#include "analogSensors.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,8 +111,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  // _printf("LED Collar Startup...\n");
+  printf("LED Collar Startup...\n");
 
+  HAL_ADCEx_Calibration_Start(&hadc1);
 
   initSound();
   initLed();
@@ -137,6 +141,7 @@ int main(void)
 
     loopLed();
     buttonLoop();
+    analogSensorsLoop();
     // if(HAL_GetTick() - lastTime > 100) {
     //   lastTime = HAL_GetTick();
       // HAL_GPIO_TogglePin(LED_ENABLE_GPIO_Port, LED_ENABLE_Pin);
