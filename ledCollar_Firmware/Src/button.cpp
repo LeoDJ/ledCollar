@@ -7,19 +7,27 @@ click_t btnLastState[btnCount];
 
 
 void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_t holdTime = 0) {
-    if(btnIndex == 0) {
-        switch(clickType) {
+    if (btnIndex == 0) {
+        switch (clickType) {
+            case single_released:
+                if (holdTime < HOLD_TIME) {
+                    ledNextAnimation();
+                }
+                else if (holdTime < SHUTDOWN_TIME) { // button was held and released
+                    
+                }
+                else {  // button was held and released long enough to shut down
+
+                }
+                break;
             case single_pressed:
-                if(holdTime > HOLD_TIME) {
+                if (holdTime > HOLD_TIME) { // button was held
                     
                 }
                 break;
-            case single_released:
-                if(holdTime < HOLD_TIME) {
-                    ledNextAnimation();
-                }
-                else { // button was held and released
-                    
+            case still_held:
+                if (holdTime > SHUTDOWN_TIME) { // button was held long enough for shutdown (still triggers the normal hold-action before)
+
                 }
                 break;
             default:
@@ -68,6 +76,10 @@ void buttonLoop() {
             }
         }
         else if(s == single_pressed && HAL_GetTick() - btnLastChange[i] > HOLD_TIME) {
+            btnLastState[i] = still_held;
+            handleButton(i, s, HAL_GetTick() - btnLastChange[i]);
+        }
+        else if(s == still_held && HAL_GetTick() - btnLastChange[i] > SHUTDOWN_TIME) {
             btnLastState[i] = none;
             handleButton(i, s, HAL_GetTick() - btnLastChange[i]);
         }

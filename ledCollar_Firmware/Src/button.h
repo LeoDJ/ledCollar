@@ -4,8 +4,9 @@
 #include "gpio.h"
 
 #define DEBOUNCE_TIME   5
-#define CLICK_TIME      300     // maximum hold time in ms for a click to register
-#define HOLD_TIME       1000    // time until the button counts as hold
+#define CLICK_TIME      300     // ms, idle time until a click to registers (to wait for multiple clicks)
+#define HOLD_TIME       1000    // ms, time until the button counts as hold
+#define SHUTDOWN_TIME   3000    // ms, time until long press turns off the device
 
 // because of EXTI behaviour, currently only supports differentiating based on pin number, not port
 GPIO_TypeDef* const btnPort[] =   {BTN_GPIO_Port};
@@ -20,7 +21,7 @@ typedef enum {
     double_released,
     triple_pressed,
     triple_released,
-    hold_released
+    still_held
 } click_t;
 
 void buttonInit();

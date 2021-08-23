@@ -114,14 +114,7 @@ void systemShutdown() {
     printf("UNDEVOLTAGE DETECTED! (%d mV) SHUTTING DOWN!\n", getVcc());
 
     // blink leds 3 times
-    for (int i = 0; i < 3; i++) {
-        HAL_Delay(250);
-        fillLed(0xFF0000);
-        doLedTransfer();
-        HAL_Delay(250);
-        fillLed(0x000000);
-        doLedTransfer();
-    }
+    ledBlink(3, 250, 0xFF0000);
     
     // disable LEDs
     HAL_GPIO_WritePin(LED_ENABLE_GPIO_Port, LED_ENABLE_Pin, GPIO_PIN_RESET);

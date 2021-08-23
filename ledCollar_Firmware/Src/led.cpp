@@ -38,3 +38,14 @@ void ledNextAnimation() {
     }
     setAnimation(currentAnimation);
 }
+
+void ledBlink(uint32_t blinks, uint32_t delay, uint32_t rgb) {
+    for (uint32_t i = 0; i < blinks; i++) {
+        HAL_Delay(delay);
+        fillLed(rgb);
+        doLedTransfer();
+        HAL_Delay(delay);
+        fillLed(0x000000);
+        doLedTransfer();
+    }
+}
