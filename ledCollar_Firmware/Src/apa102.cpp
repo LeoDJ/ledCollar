@@ -47,6 +47,12 @@ void setLed(uint16_t index, ledData_t data, bool onlyColor) {
     }
 }
 
+void fillLed(uint32_t rgb) {
+    for (uint16_t i = 0; i < NUM_LEDS; i++) {
+        setLed(i, rgb);
+    }
+}
+
 uint32_t getLed(uint16_t index) {
     if(index < NUM_LEDS) {
         return ledBuf[index].rawColor;

@@ -33,6 +33,7 @@ void setLed(uint16_t index, uint32_t rgb);
 void setLed(uint16_t index, uint8_t r, uint8_t g, uint8_t b);
 void setLed(uint16_t index, ledData_t data, bool onlyColor);
 // void setLed(uint16_t index, ledData_t data) {setLed(index, data, true);}
+void fillLed(uint32_t rgb);
 
 // returns pixel color in 0x00RRGGBB format
 uint32_t getLed(uint16_t index);
