@@ -321,6 +321,7 @@ uint32_t _getBufLed(uint16_t index) {
     if(animLedBuf != NULL && index < animNumLeds) {
         return animLedBuf[index];
     }
+    return 0;
 }
 
 void _updateLeds(bool doGamma) {
