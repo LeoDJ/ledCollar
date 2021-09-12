@@ -1,17 +1,24 @@
 #include "button.h"
 #include "led.h"
+#include "system.h"
 #include <stdio.h>
 
 uint32_t btnLastChange[btnCount];
 click_t btnLastState[btnCount];
 
 
+// TODO refactor (so that the differentiation by system state is on the first level)
 void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_t holdTime = 0) {
     if (btnIndex == 0) {
         switch (clickType) {
             case single_released:
-                if (holdTime < HOLD_TIME) {
-                    ledNextAnimation();
+                if (holdTime < HOLD_TIME) { // button was pressed and released
+                    if (systemGetState() == SysState::InStandby) {
+                        systemSetValidWakeup(true); // for now simply wake up after a single press
+                    }
+                    else {
+                        ledNextAnimation();
+                    }
                 }
                 else if (holdTime < SHUTDOWN_TIME) { // button was held and released
                     
@@ -27,7 +34,10 @@ void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_
                 break;
             case still_held:
                 if (holdTime > SHUTDOWN_TIME) { // button was held long enough for shutdown (still triggers the normal hold-action before)
-
+                    if (systemGetState() != SysState::InStandby) {
+                        systemStandby();
+                        // TODO: show standby animation instead
+                    }
                 }
                 break;
             default:
