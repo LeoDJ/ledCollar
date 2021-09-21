@@ -6,7 +6,7 @@
 
 #define PRINTF_UART huart2
 #define DEBUG_UART  huart1
-#define LED_SPI     hspi2
+#define LED_SPI     hspi2                   // currently SPI2 SCK and MOSI are hardcoded to shut off during standby (system.cpp)
 
 extern UART_HandleTypeDef   PRINTF_UART;
 extern UART_HandleTypeDef   DEBUG_UART;

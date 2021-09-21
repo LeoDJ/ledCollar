@@ -9,6 +9,7 @@
 #include "apa102.h"
 #include "spi.h"
 #include "button.h"
+#include "adc.h"
 
 // used to indicate if all conditions are met to wake up again (filtering out spurious button presses etc.)
 bool systemValidWakeup = false;
@@ -40,6 +41,8 @@ void systemLoop() {
 }
 
 void systemDisableModules() {
+    // disable ADC (saves about 1mA)
+    __HAL_ADC_DISABLE(&hadc1);
     // disable LEDs
     GPIO_InitTypeDef GPIO_InitStruct = {.Pin = GPIO_PIN_13 | GPIO_PIN_15, .Mode = GPIO_MODE_INPUT}; 
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);     // disable SPI pins so it doesn't draw power from there
@@ -51,6 +54,7 @@ void systemDisableModules() {
 }
 
 void systemEnableModules() {
+    __HAL_ADC_ENABLE(&hadc1);
     // enable LEDs
     GPIO_InitTypeDef GPIO_InitStruct = {.Pin = GPIO_PIN_13 | GPIO_PIN_15, .Mode = GPIO_MODE_AF_PP, .Pull = GPIO_NOPULL, .Speed = GPIO_SPEED_FREQ_HIGH};
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);     // re-enable SPI pins
