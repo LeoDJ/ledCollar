@@ -22,6 +22,7 @@ void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_
                         systemSetValidWakeup(true); // for now simply wake up after a single press
                     }
                     else {
+                        printf("%8d [BTN] nextAnimation\n", HAL_GetTick());
                         ledNextAnimation();
                     }
                 }
@@ -34,6 +35,7 @@ void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_
                 break;
             case single_pressed:
                 if (holdTime > HOLD_TIME) { // button was held
+                    printf("%8d [BTN] increaseBrightness\n", HAL_GetTick());
                     setGlobalBrightness(brightnessSteps[curBrightnessStep]);
                     curBrightnessStep++;
                     if (curBrightnessStep >= brightnessStepsNum) {
@@ -57,12 +59,10 @@ void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_
 
 void HAL_GPIO_EXTI_Callback(uint16_t pin) {
     // search button pin in button definition
-    // printf("%8d %d", HAL_GetTick(), HAL_GPIO_ReadPin(btnPort[0], btnPin[0]));
     for(uint8_t i = 0; i < btnCount; i++) {
         if(btnPin[i] == pin) {
             uint8_t btnState = HAL_GPIO_ReadPin(btnPort[i], btnPin[i]);
-            // if(btnState != btnLastState[i]) {
-                // ledNextAnimation();
+            // printf("%8d [BTN] %d, ", HAL_GetTick(), btnState);
                 if(HAL_GetTick() - btnLastChange[i] > DEBOUNCE_TIME) {
                     if(!btnState && (btnLastState[i] % 2 == 0) && btnLastState[i] < triple_released) { // button just got pressed
                         btnLastState[i] = (click_t)(btnLastState[i] + 1);
@@ -70,12 +70,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin) {
                     else if(btnState && (btnLastState[i] % 2 == 1) && btnLastState[i] < triple_released) { // button just got released
                         btnLastState[i] = (click_t)(btnLastState[i] + 1);
                     }
+                    else if(btnState && btnLastState[i] == still_held) { // reset held state upon release of button
+                        btnLastState[i] = none;
+                    }
 
-                    // printf(" %d",  btnLastState[0]);
+                    // printf(" last: %d %8d", btnLastState[i], btnLastChange[i]);
 
-                    btnLastChange[i] = HAL_GetTick();
                 }
-            // }
+                btnLastChange[i] = HAL_GetTick();
         }
     }
     // printf("\n");

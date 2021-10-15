@@ -6,7 +6,7 @@
 //     setLed(index + 103, rgb);
 // }
 
-uint8_t currentAnimation = 5;
+uint8_t currentAnimation = 4;
 
 
 void initLed() {
@@ -32,12 +32,13 @@ void loopLed() {
     }
 
     if (HAL_GetTick() - lastAnimationNext >= 10000) {
-        lastAnimationNext = HAL_GetTick();
+        // resetting lastAnimationNext happens in the function
         ledNextAnimation();
     }
 }
 
 void ledNextAnimation() {
+    lastAnimationNext = HAL_GetTick();  // also reset next animation counter on manual call of this function
     currentAnimation++;
     if(currentAnimation >= getAnimationCount()) {
         currentAnimation = 0;
