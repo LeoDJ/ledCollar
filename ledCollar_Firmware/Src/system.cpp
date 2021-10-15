@@ -17,8 +17,8 @@ bool systemValidWakeup = false;
 systemState_t curSysState = SysState::Idle;
 
 // TODO: calibrate values
-const uint32_t autoBrightLUT_sensor[] =    {    0,  100, 3000, 4095 };
-const uint32_t autoBrightLUT_led[] =       {    1,    1,   31,   31 };
+const uint32_t autoBrightLUT_led[] =       {    1,    2,    3,    4,    7,   15,   24,   31 };
+const uint32_t autoBrightLUT_sensor[] =    {    0,   20,   60,  300,  900, 1500, 2800, 3900 };
 const size_t   autoBrightLUT_numVals = sizeof(autoBrightLUT_sensor) / sizeof(autoBrightLUT_sensor[0]);
 
 uint32_t lastAnalogSensorUpdate = 0;
@@ -35,7 +35,7 @@ void systemLoop() {
         // brightness value is already smoothed, so only need to apply it
         uint16_t measuredBrightness = getAmbientLight();
         uint8_t brightness = linearInterpolate(measuredBrightness, autoBrightLUT_sensor, autoBrightLUT_led, autoBrightLUT_numVals);
-        // setGlobalBrightness(brightness);
+        setGlobalBrightness(brightness);
         printf("%8ld [Bright] Sensor: %4d, LED: %2d\n", HAL_GetTick(), measuredBrightness, brightness);
     }
 }
@@ -54,6 +54,7 @@ void systemDisableModules() {
 }
 
 void systemEnableModules() {
+    // enable ADC (TODO: fix ADC probably not initializing correctly again)
     __HAL_ADC_ENABLE(&hadc1);
     // enable LEDs
     GPIO_InitTypeDef GPIO_InitStruct = {.Pin = GPIO_PIN_13 | GPIO_PIN_15, .Mode = GPIO_MODE_AF_PP, .Pull = GPIO_NOPULL, .Speed = GPIO_SPEED_FREQ_HIGH};
