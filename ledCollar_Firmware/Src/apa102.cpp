@@ -106,7 +106,7 @@ void initApa102() {
         ledBuf[i].start = 0b111;
     }
 
-    setGlobalBrightness(2);
+    // setGlobalBrightness(2);
     
     doLedTransfer(); // initialize LED strip
 

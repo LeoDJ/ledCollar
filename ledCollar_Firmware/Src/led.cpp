@@ -20,6 +20,7 @@ void initLed() {
 }
 
 uint32_t lastLedUpdate = 0;
+uint32_t lastAnimationNext = 0;
 
 void loopLed() {
     // TODO: replace this with timer
@@ -28,6 +29,11 @@ void loopLed() {
         
         stepAnimation();
         doLedTransfer();
+    }
+
+    if (HAL_GetTick() - lastAnimationNext >= 10000) {
+        lastAnimationNext = HAL_GetTick();
+        ledNextAnimation();
     }
 }
 

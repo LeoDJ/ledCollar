@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "gpio.h"
 
-#define DEBOUNCE_TIME   5
+#define DEBOUNCE_TIME   1
 #define CLICK_TIME      300     // ms, idle time until a click to registers (to wait for multiple clicks)
 #define HOLD_TIME       1000    // ms, time until the button counts as hold
 #define SHUTDOWN_TIME   3000    // ms, time until long press turns off the device

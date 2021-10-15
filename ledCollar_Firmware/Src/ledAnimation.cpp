@@ -229,7 +229,7 @@ anim_t anims[] = {
     // {"fadeUpDown", fadeUpDown},
     // {"scanner", scanner},
     #ifdef ANIMATION_USE_INTERNAL_BUFFER // those animations require the internal buffer
-    {"larsson", larssonScanner},
+    // {"larsson", larssonScanner},
     {"larssonRainbow", larssonScannerRainbow},
     {"twinkleStars", twinkleStars},
     {"vu1", vu1},

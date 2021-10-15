@@ -2,10 +2,15 @@
 #include "led.h"
 #include "system.h"
 #include <stdio.h>
+#include "apa102.h"
 
 uint32_t btnLastChange[btnCount];
 click_t btnLastState[btnCount];
 
+
+const uint8_t brightnessSteps[] = {1, 4, 8, 12, 20, 31};
+const uint8_t brightnessStepsNum = sizeof(brightnessSteps) / sizeof(brightnessStepsNum);
+uint8_t curBrightnessStep = 1; // start with 1 as brightness 1 is already start value
 
 // TODO refactor (so that the differentiation by system state is on the first level)
 void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_t holdTime = 0) {
@@ -29,15 +34,19 @@ void handleButton(uint8_t btnIndex, click_t clickType = single_released, uint32_
                 break;
             case single_pressed:
                 if (holdTime > HOLD_TIME) { // button was held
-                    
+                    setGlobalBrightness(brightnessSteps[curBrightnessStep]);
+                    curBrightnessStep++;
+                    if (curBrightnessStep >= brightnessStepsNum) {
+                        curBrightnessStep = 0;
+                    }
                 }
                 break;
             case still_held:
                 if (holdTime > SHUTDOWN_TIME) { // button was held long enough for shutdown (still triggers the normal hold-action before)
-                    if (systemGetState() != SysState::InStandby) {
+                    /*if (systemGetState() != SysState::InStandby) {
                         systemStandby();
                         // TODO: show standby animation instead
-                    }
+                    }*/
                 }
                 break;
             default:
