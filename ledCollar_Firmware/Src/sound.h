@@ -11,7 +11,7 @@
 
 #define MIDPOINT_AVG_COEFF      0.002
 #define BASS_PEAK_COEFF_INC     0.2
-#define BASS_PEAK_COEFF_DEC     (BLOCK_SIZE * 0.0000015) // 0.0001 worked good at 50 binSize
+#define BASS_PEAK_COEFF_DEC     (BLOCK_SIZE * 0.000015) //(BLOCK_SIZE * 0.0000015) // 0.0001 worked good at 50 binSize
 #define BASS_PEAK_MIN_VAL       (BLOCK_SIZE * 25) // 10000 worked good at 50 binSize
 #define BASS_PEAK_HOLD_TIME     600 // ms
 #define BASS_TROUGH_COEFF_DEC   0.2

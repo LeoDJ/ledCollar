@@ -1,6 +1,8 @@
 #include "led.h"
 #include "apa102.h"
 
+#include <stdlib.h>
+
 // TODO: remove function when using LED strip with correct length
 // void setLedFunc(uint16_t index, uint32_t rgb) {
 //     setLed(index + 103, rgb);
@@ -33,7 +35,8 @@ void loopLed() {
 
     if (HAL_GetTick() - lastAnimationNext >= 10000) {
         // resetting lastAnimationNext happens in the function
-        ledNextAnimation();
+        // ledNextAnimation();
+        ledRandomAnimation();
     }
 }
 
@@ -43,6 +46,17 @@ void ledNextAnimation() {
     if(currentAnimation >= getAnimationCount()) {
         currentAnimation = 0;
     }
+    setAnimation(currentAnimation);
+}
+
+void ledRandomAnimation() {
+    lastAnimationNext = HAL_GetTick();  // also reset next animation counter on manual call of this function
+    uint8_t randNum = rand() % getAnimationCount();
+    if (randNum == currentAnimation) {  // if it choses the same animation, try again
+        ledRandomAnimation();
+        return;
+    }
+    currentAnimation = randNum;
     setAnimation(currentAnimation);
 }
 
