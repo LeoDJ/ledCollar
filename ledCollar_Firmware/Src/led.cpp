@@ -1,5 +1,6 @@
 #include "led.h"
 #include "apa102.h"
+#include "analogSensors.h"
 
 #include <stdlib.h>
 
@@ -23,10 +24,20 @@ void initLed() {
 
 uint32_t lastLedUpdate = 0;
 uint32_t lastAnimationNext = 0;
+bool shownBatteryStatus = false;
 
 void loopLed() {
+    // after boot, show battery state for a few seconds
+    if (!shownBatteryStatus) {
+        uint8_t linearBattPercent = (getVcc() - 3000) / 12;
+        ledDisplayBatteryPercent(linearBattPercent);
+
+        if (HAL_GetTick() > INITIAL_BATTERY_SHOW_TIME) {
+            shownBatteryStatus = true;
+        }
+    }
     // TODO: replace this with timer
-    if(HAL_GetTick() - lastLedUpdate > 1000 / UPDATE_RATE) { // only do update if update rate allows it
+    else if (HAL_GetTick() - lastLedUpdate > 1000 / UPDATE_RATE) { // only do update if update rate allows it
         lastLedUpdate = HAL_GetTick();
         
         stepAnimation();
@@ -43,7 +54,7 @@ void loopLed() {
 void ledNextAnimation() {
     lastAnimationNext = HAL_GetTick();  // also reset next animation counter on manual call of this function
     currentAnimation++;
-    if(currentAnimation >= getAnimationCount()) {
+    if (currentAnimation >= getAnimationCount()) {
         currentAnimation = 0;
     }
     setAnimation(currentAnimation);
@@ -69,4 +80,14 @@ void ledBlink(uint32_t blinks, uint32_t delay, uint32_t rgb) {
         fillLed(0x000000);
         doLedTransfer();
     }
+}
+
+void ledDisplayBatteryPercent(uint8_t battPercent) {
+    uint8_t numberOfLedsToShow = NUM_LEDS *  battPercent / 100;
+    fillLed(0);
+    for (int i = 0; i < numberOfLedsToShow; i++) {
+        uint8_t iScaled = i * 255 / (NUM_LEDS-1);
+        setLed(i, (255 - iScaled) << 16 | iScaled << 8);
+    }
+    doLedTransfer();
 }
